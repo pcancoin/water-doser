@@ -18,7 +18,7 @@ class SoilSensor:
             tabValues.append(input.get("value"))
             #device.log(message=str(input.get("value")), message_type="info")
         
-        lastVal = tabValues[len(tabValues)-1]/1023
+        lastVal = 1-tabValues[len(tabValues)-1]/1023
 
         return lastVal
 

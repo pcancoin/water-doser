@@ -98,9 +98,10 @@ if __name__ == "__main__":
 
             #get humidity
             soil_sensor = SoilSensor(FARMWARE_NAME)
-            humidity = soil_sensor.read_sensor()
+            humidity_rate = soil_sensor.read_sensor()
+
             # use spread and age to decide Xms to water.
-            dose_ms = water_dose.calc_watering_ms(plant_closest, precip=weather_precip)
+            dose_ms = water_dose.calc_watering_ms(plant_closest, precip=weather_precip, humidity_rate)
             control.execute_watering(dose_ms)
         else:
             log("No close points, moving on.", "error", title="main")

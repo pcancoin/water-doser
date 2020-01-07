@@ -45,40 +45,46 @@ class WaterDose:
         Returns:
             bool -- [description]
         """
-        age = self._plant_age(plant)
-        if age == 0:
-            return False
 
-        self._chk_openfarm_meta(plant)
+        if humidity < 0.5:
+            age = self._plant_age(plant)
+            if age == 0:
+                return False
 
-        # calculating supposed watering for today
-        supposed_watering = self._get_supposed_watering(
-            plant["meta"]["spread"], plant["meta"]["height"], age
-        )
+            self._chk_openfarm_meta(plant)
 
-        # how much to water in ml, minimum value for ms is 250ms
-        ml = int(round(supposed_watering)) if supposed_watering > 0 else 0
+            # calculating supposed watering for today
+            supposed_watering = self._get_supposed_watering(
+                plant["meta"]["spread"], plant["meta"]["height"], age
+            )
 
-        # get area of plant on ground, converted to m^2
-        area_plant = math.pi * (plant["meta"]["spread"] / 2000) ** 2
-        # * 1000 to convert from mm/m^2 to ml
-        rain_ml = precip * 1000 * area_plant
-        #si humidity<0.5 il faut arroser plus mais je sais pas de combien
-        ml_corrected_to_precip = ml - rain_ml
+            # how much to water in ml, minimum value for ms is 250ms
+            ml = int(round(supposed_watering)) if supposed_watering > 0 else 0
 
-        ms = 0
-        if ml_corrected_to_precip > 0:
-            ms = int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000)
+            # get area of plant on ground, converted to m^2
+            area_plant = math.pi * (plant["meta"]["spread"] / 2000) ** 2
+            # * 1000 to convert from mm/m^2 to ml
+            rain_ml = precip * 1000 * area_plant
+            #si humidity<0.5 il faut arroser plus mais je sais pas de combien
+            ml_corrected_to_precip = ml - rain_ml
 
-        log(
-            "Water {} {}ml; for {}ms (precip {}, rain_ml {} on area {})".format(
-                plant["openfarm_slug"], ml, ms, precip, rain_ml, area_plant
-            ),
-            'success',
-            title="calc_watering_ms",
-        )
+            ms = 0
+            if ml_corrected_to_precip > 0:
+                ms = int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000)
 
-        return ms
+            log(
+                "Water {} {}ml; for {}ms (precip {}, rain_ml {} on area {})".format(
+                    plant["openfarm_slug"], ml, ms, precip, rain_ml, area_plant
+                ),
+                'success',
+                title="calc_watering_ms",
+            )
+
+            return ms
+        
+        else:
+            return 0
+        
 
     def _chk_openfarm_meta(self, plant):
         """ Get OpenFarm data. Adds ['meta']['spread'] and ['height'], saves for future use.
