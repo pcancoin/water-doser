@@ -9,6 +9,7 @@ from water_dose import WaterDose
 from plants import Plants
 from control import Control
 from weather_dark_sky import Weather
+from soil_sensor import SoilSensor
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -95,6 +96,9 @@ if __name__ == "__main__":
                 weather = Weather(FARMWARE_NAME, config=input_store.input)
                 weather_precip = weather.get_precip()
 
+            #get humidity
+            soil_sensor = SoilSensor(FARMWARE_NAME)
+            humidity = soil_sensor.read_sensor()
             # use spread and age to decide Xms to water.
             dose_ms = water_dose.calc_watering_ms(plant_closest, precip=weather_precip)
             control.execute_watering(dose_ms)

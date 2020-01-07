@@ -32,7 +32,7 @@ class WaterDose:
         self.farmwarename = farmwarename
         self.config = InputStore.merge_config(self.config, config)
 
-    def calc_watering_ms(self, plant, precip=0.0):
+    def calc_watering_ms(self, plant, precip=0.0, humidity=0.5):
         """ Gets plant data if not already stored in Plant's 'meta' data dict, and save it.
 
         Arguments:
@@ -63,6 +63,7 @@ class WaterDose:
         area_plant = math.pi * (plant["meta"]["spread"] / 2000) ** 2
         # * 1000 to convert from mm/m^2 to ml
         rain_ml = precip * 1000 * area_plant
+        #si humidity<0.5 il faut arroser plus mais je sais pas de combien
         ml_corrected_to_precip = ml - rain_ml
 
         ms = 0
